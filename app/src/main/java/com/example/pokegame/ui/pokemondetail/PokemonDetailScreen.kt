@@ -32,6 +32,7 @@ import coil.compose.AsyncImage
 import com.example.pokegame.data.model.PokemonDetail
 import com.example.pokegame.data.model.StatSlot
 import com.example.pokegame.data.model.TeamMember
+import com.example.pokegame.domain.TypeChart
 import com.example.pokegame.ui.team.AddResult
 import com.example.pokegame.ui.team.TeamViewModel
 
@@ -99,7 +100,11 @@ fun PokemonDetailScreen(
 }
 
 @Composable
-private fun PokemonInfo(pokemon: PokemonDetail, message: String?, onAddToTeam: () -> Unit) {
+private fun PokemonInfo(
+    pokemon: PokemonDetail,
+    message: String?,
+    onAddToTeam: () -> Unit
+) {
     // Usa la imagen grande si existe; si no, el sprite normal
     val image = pokemon.sprites.other?.officialArtwork?.frontDefault
         ?: pokemon.sprites.frontDefault
@@ -126,8 +131,6 @@ private fun PokemonInfo(pokemon: PokemonDetail, message: String?, onAddToTeam: (
         // La API da la altura en decímetros y el peso en hectogramos
         Text("Altura: ${pokemon.height / 10.0} m   Peso: ${pokemon.weight / 10.0} kg")
 
-        Spacer(modifier = Modifier.height(16.dp))
-
         Button(onClick = onAddToTeam) {
             Text("Agregar al equipo")
         }
@@ -137,6 +140,10 @@ private fun PokemonInfo(pokemon: PokemonDetail, message: String?, onAddToTeam: (
 
         Text("Estadísticas base", style = MaterialTheme.typography.titleMedium)
         pokemon.stats.forEach { StatRow(it) }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        WeaknessSection(types = pokemon.types.map { it.type.name })
     }
 }
 
@@ -163,4 +170,40 @@ private fun StatRow(stat: StatSlot) {
             modifier = Modifier.weight(1f)
         )
     }
+}
+
+@Composable
+private fun WeaknessSection(types: List<String>) {
+    // Multiplicador de cada tipo atacante contra este Pokémon
+    val results = TypeChart.types.map { it to TypeChart.multiplier(it, types) }
+    val weak = results.filter { it.second > 1.0 }.sortedByDescending { it.second }
+    val resist = results.filter { it.second > 0.0 && it.second < 1.0 }.sortedBy { it.second }
+    val immune = results.filter { it.second == 0.0 }
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text("Debilidades y resistencias", style = MaterialTheme.typography.titleMedium)
+        MatchupLine("Débil a", weak)
+        MatchupLine("Resiste", resist)
+        MatchupLine("Inmune a", immune)
+    }
+}
+
+@Composable
+private fun MatchupLine(title: String, items: List<Pair<String, Double>>) {
+    if (items.isEmpty()) return
+    val text = items.joinToString(", ") {
+        "${TypeChart.nameEs(it.first)} ${multiplierText(it.second)}"
+    }
+    Text(
+        text = "$title: $text",
+        modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp)
+    )
+}
+
+private fun multiplierText(multiplier: Double): String = when (multiplier) {
+    4.0 -> "x4"
+    2.0 -> "x2"
+    0.5 -> "x½"
+    0.25 -> "x¼"
+    else -> "x$multiplier"
 }
