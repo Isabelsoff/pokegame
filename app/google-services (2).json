@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "676554407600",
+    "project_id": "pokegame-92955",
+    "storage_bucket": "pokegame-92955.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:676554407600:android:3c5b136164d40469bb0575",
+        "android_client_info": {
+          "package_name": "com.example.pokegame"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkYixccGBslo2-NT2PQnl1tU972Jrh0a4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
