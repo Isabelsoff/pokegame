@@ -40,39 +40,3 @@ com.example.pokegame
     └── theme
 ```
 
-## Cómo ejecutarlo
-
-El archivo `google-services.json` no está en el repositorio, así que hay que conectar tu propio proyecto de Firebase:
-
-1. Clona el repositorio y ábrelo con Android Studio.
-2. Crea un proyecto en [Firebase](https://console.firebase.google.com) y registra una app Android con el paquete `com.example.pokegame`.
-3. Descarga `google-services.json` y colócalo dentro de la carpeta `app/`.
-4. En **Authentication**, activa el método **Correo electrónico/contraseña**.
-5. En **Firestore Database**, crea la base de datos y publica estas reglas:
-
-```
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /users/{userId}/{document=**} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-    }
-  }
-}
-```
-
-6. Sincroniza Gradle y ejecuta la app en un emulador o dispositivo con internet.
-
-## Pruebas
-
-Las pruebas unitarias cubren la lógica del equipo y del análisis de tipos:
-
-```
-./gradlew :app:testDebugUnitTest
-```
-
-## Próximos pasos
-
-- Búsqueda de Pokémon por nombre.
-- Colores por tipo en la lista y el detalle.
-- Varios equipos con nombre por usuario.
